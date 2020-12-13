@@ -1,7 +1,7 @@
 num_iter = 5000
 
 function get_numbers()::Vector{Int32}
-    f = open("day1/input.txt")
+    f = open("input.txt")
     lines = readlines(f)
     numbers::Vector{Int32} = parse.(Int32, lines)
     return numbers
@@ -28,11 +28,17 @@ function twosum_search(target::Int32, numbers::Vector{Int32})::Int32
 end
 
 function twosum_shrink_iter(target::Int32, numbers::Vector{Int32})::Int32
-    for i in eachindex(numbers)
-        for j in eachindex(reverse(numbers))
-            if numbers[i] + numbers[j] == target
-                return numbers[i]*numbers[j]
-            end
+    numbers = sort!(numbers)
+    left = 1
+    right = length(numbers)
+    while left < right
+        s = numbers[left] + numbers[right]
+        if s == target
+            return numbers[left]*numbers[right]
+        elseif s < target
+            left += 1
+        elseif s > target
+            right -= 1
         end
     end
 end
@@ -140,5 +146,4 @@ end
 @time bench_threesum_lookup()
 
 print_results()
-
 
