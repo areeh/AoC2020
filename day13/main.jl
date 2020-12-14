@@ -33,9 +33,9 @@ end
 
 function main2(path)
     d = read_input(path)
-    a = [-i for (i, a)=enumerate(d.schedule) if !isnothing(a)]
+    a = [-i+1 for (i, a)=enumerate(d.schedule) if !isnothing(a)]
     n = @_ filter(!isnothing(_), d.schedule)
-    t = chineseremainder(n, a) + 1
+    t = chineseremainder(n, a)
 end
 
 @btime main1("day13/input_sample.txt")
