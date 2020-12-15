@@ -74,7 +74,7 @@ function main2(path)
     sum(values(memory))
 end
 
-@btime main1("day14/input_sample.txt")
+main1("day14/input_sample.txt")
 @btime main1("day14/input.txt")
-@btime main2("day14/input_sample2.txt")
+main2("day14/input_sample2.txt")
 @btime main2("day14/input.txt")

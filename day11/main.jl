@@ -5,7 +5,7 @@ using Underscores
 function read_input(path::String="day11/input.txt")
     lines = readlines(path)
     (n, m) = length(lines), length(lines[1])
-    out = Matrix{Char}(undef,n,m)
+    out = Matrix{Char}(undef, n, m)
     for i in 1:n
         for (j, c) in enumerate(lines[i])
             out[i, j] = c
@@ -20,7 +20,7 @@ function update!(not_floors::BitArray{2}, occupied::BitArray{2}, kernel::BitArra
     while prev != occupied
         i += 1
         copyto!(prev, occupied)
-        changes::Array{Int8,2} = conv2(occupied, kernel)[2:end-1, 2:end-1]
+        changes::Array{Int8,2} = conv2(occupied, kernel)[2:end - 1, 2:end - 1]
         for i in eachindex(occupied)
             if changes[i] == zero(Int8)
                 occupied[i] = 1
@@ -43,7 +43,7 @@ function enumerate_seen_seats(A::Array{Int8,2})::Dict{CartesianIndex{2},Vector{C
             seen_curr = []
             for d in directions
                 for i in 1:Ilast[1]
-                    idx = I+i*d
+                    idx = I + i * d
                     if Ifirst[1] <= idx[1] <= Ilast[1] && Ifirst[2] <= idx[2] <= Ilast[2]
                         @inbounds if A[idx] == one(Int8)
                             push!(seen_curr, idx)
@@ -89,7 +89,7 @@ function count_seats(seats)::Int
             seats[i] = '#'
         end
     end
-    #display(seats)
+    # display(seats)
     return sum(occupied)
 end
 
@@ -97,7 +97,7 @@ function count_seats_2(seats)::Int
     seat_to_int::Dict{Char,Int8} = Dict('.' => 0, 'L' => 1, '#' => 2)
     seats_int::Array{Int8,2} = @_ map(seat_to_int[_], seats)
     seats_int = update!(seats_int)
-    #display(seats_int)
+    # display(seats_int)
     return sum(seats_int .== 2)
 end
 
@@ -111,7 +111,7 @@ function main2(path)
     count_seats_2(seats)
 end
 
-@btime main1("day11/input_sample.txt")
+main1("day11/input_sample.txt")
 @btime main1("day11/input.txt")
-@btime main2("day11/input_sample.txt")
+main2("day11/input_sample.txt")
 @btime main2("day11/input.txt")

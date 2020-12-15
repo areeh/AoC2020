@@ -182,18 +182,8 @@ function main2_sp()
     run_program_repair_sp(prog)
 end
 
-@time main_sample()
-@time main()
-@time main2_sample()
-
-@time main2_sp()
-
-println("timings")
-@time main2_sp()
-@time main2_sp()
-@time main2_sp()
-@time main2_sp()
-@time main2()
-@time main2()
-@time main2()
-@time main2()
+main_sample()
+@btime main()
+main2_sample()
+@btime main2_sp()
+@btime main2()

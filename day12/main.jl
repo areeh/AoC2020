@@ -53,7 +53,7 @@ function rotate(wp::Tuple{Int,Int}, val::Int, d::Int)::Tuple{Int,Int}
 end
 
 function main1(path::String="day12/input.txt")
-    actions=read_input(path)
+    actions = read_input(path)
     directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     facing::Int = 2
     pos = (0, 0)
@@ -68,12 +68,12 @@ function main1(path::String="day12/input.txt")
             pos = forward(a[2], facing, pos, directions)
         end
     end
-    #display(pos)
+    # display(pos)
     return sum(abs.(pos))
 end
 
 function main2(path::String="day12/input.txt")
-    actions=read_input(path)
+    actions = read_input(path)
     directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     bp = (0, 0)
     wp = (-1, 10)
@@ -88,12 +88,12 @@ function main2(path::String="day12/input.txt")
             bp = forward(bp, wp, a[2])
         end
     end
-    #display(bp)
+    # display(bp)
     return sum(abs.(bp))
 end
 
-println(@btime main1("day12/input_sample.txt"))
+println(main1("day12/input_sample.txt"))
 println(@btime main1())
-println(@btime main2("day12/input_sample.txt"))
+println(main2("day12/input_sample.txt"))
 println(@btime main2())
 

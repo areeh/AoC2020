@@ -1,4 +1,4 @@
-using PrettyPrinting
+using BenchmarkTools
 
 function read_batch(path::String)::Vector{Dict{String,String}}
     out::Vector{Dict{String,String}} = []
@@ -8,7 +8,7 @@ function read_batch(path::String)::Vector{Dict{String,String}}
             push!(out, curr_dict)
             curr_dict = Dict()
         else
-            pairs = [split(kv, ':') for kv=split(line)]
+            pairs = [split(kv, ':') for kv = split(line)]
             for (k, v) in pairs
                 curr_dict[k] = v
             end
@@ -66,7 +66,7 @@ function hgt_rule(hgt::String)::Bool
     if char_idx < 2
         return false
     end
-    num = parse(Int64, hgt[1:char_idx-1])
+    num = parse(Int64, hgt[1:char_idx - 1])
     msr = hgt[char_idx:len_hgt]
     if msr == "cm"
         if 150 <= num <= 193
@@ -135,11 +135,11 @@ function main_sample()::Int64
         if is_present(Set(keys(p)))
             count_valid += 1
             println("VALID PASSPORT:")
-            pprint(p)
+            display(p)
             println()
         else
             println("INVALID PASSPORT:")
-            pprint(p)
+            display(p)
             println()
         end
     end
@@ -156,7 +156,7 @@ function main1()
             count_valid += 1
         end
     end
-    println("Number of valid passports: $count_valid")
+    # println("Number of valid passports: $count_valid")
     return count_valid
 end
 
@@ -168,11 +168,11 @@ function main_sample2()::Int64
             if is_valid(p)
                 count_valid += 1
                 println("VALID PASSPORT:")
-                pprint(p)
+                display(p)
                 println()
             else
                 println("INVALID PASSPORT:")
-                pprint(p)
+                display(p)
                 println()
             end
         end
@@ -192,12 +192,12 @@ function main2()::Int64
             end
         end
     end
-    println()
-    println("Number of valid passports: $count_valid")
+    # println()
+    # println("Number of valid passports: $count_valid")
     return count_valid
 end
 
-@time main_sample()
-@time main1()
-@time main_sample2()
-@time main2()
+main_sample()
+@btime main1()
+main_sample2()
+@btime main2()

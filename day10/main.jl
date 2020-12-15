@@ -1,5 +1,4 @@
 using DelimitedFiles
-using PrettyPrinting
 using BenchmarkTools
 
 function get_input(path::String="day10/input.txt")::Array{Int,1}
@@ -16,7 +15,7 @@ end
 
 function count_diffs(numbers::Array{Int,1})::Int    sort!(numbers)
     diffs = diff(numbers)
-    u_counts = [sum(diffs .==1), sum(diffs .==3)]
+    u_counts = [sum(diffs .== 1), sum(diffs .== 3)]
     
     # simulate adding a 0 and max+3 to avoid mutating Array
     u_counts[2] += 1
@@ -30,15 +29,15 @@ function count_diffs(numbers::Array{Int,1})::Int    sort!(numbers)
 end
 
 function counter!(current::Int, remainder::Array{Int,1}, memo::Dict{Int,Int})::Int
-    #println("current $current remainder $remainder, memo $memo")
+    # println("current $current remainder $remainder, memo $memo")
     if haskey(memo, current)
-        #println("return memo")
+        # println("return memo")
         return memo[current]
-    elseif length(remainder) == 0 || remainder[1]-current > 3
-        #println("return 0")
+    elseif length(remainder) == 0 || remainder[1] - current > 3
+        # println("return 0")
         return 0
     else
-        #println("ran")
+        # println("ran")
         count = counter!(current, remainder[2:end], memo) + counter!(remainder[1], remainder[2:end], memo)
         memo[current] = count
         return count
@@ -55,39 +54,39 @@ end
 function main1_sample()
     numbers = get_sample1()
     count = count_diffs(numbers)
-    #println(count)
+    # println(count)
     return count
 end
 
 function main1()
     numbers = get_input()
     count = count_diffs(numbers)
-    #println(count)
+    # println(count)
     return count
 end
 
 function main2_sample1()
     numbers = get_sample1()
     count = count_combinations(numbers)
-    #println(count)
+    # println(count)
 end
 
 function main2_sample2()
     numbers = get_sample2()
     count = count_combinations(numbers)
-    #println(count)
+    # println(count)
 end
 
 function main2()
     numbers = get_input()
     count = count_combinations(numbers)
-    #println(count)
+    # println(count)
 end
 
 
 
-@btime main1_sample()
+main1_sample()
 @btime main1()
-@btime main2_sample1()
-@btime main2_sample2()
+main2_sample1()
+main2_sample2()
 @btime main2()
