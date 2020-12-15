@@ -1,13 +1,8 @@
 using Underscores
 using BenchmarkTools
 
-function get_input(path)
-    a = @_ readline(path) |> split(__, ',') |> parse.(Int, __)
-end
-
-
-function main1(path, n=2020)
-    numbers = get_input(path)
+function main1(path, n::Int=2020)
+    numbers = @_ readline(path) |> split(__, ',') |> parse.(Int, __)
     memo = Dict(n => i for (i, n) in enumerate(numbers[1:end - 1]))
     prev = numbers[end]
     s = length(numbers)
