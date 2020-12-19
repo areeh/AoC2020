@@ -62,8 +62,8 @@ function reverse_polish_notation(s::Vector{String})
 end
 
 function evaluate(s, precedences)
-    rpn = shunting_yard(filter(x -> !isspace(x), s), precedences)
-    rpn = @_ map(string(_), rpn)
+    s = @_ filter(!isspace(_), s)
+    rpn = shunting_yard(s, precedences) |> @_ map(string(_), __)
     reverse_polish_notation(rpn)
 end
 
