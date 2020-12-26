@@ -1,102 +1,96 @@
 using Underscores
 using BenchmarkTools
+using ResumableFunctions
 
 function read_input(path)
-    rules::Dict{Int,Union{Char,Vector{Vector{Int}}}} = Dict()
+    rules::Dict{Int,Union{Char,Array}} = Dict()
     
     lines = readlines(path)
-    (l, line_idx) = iterate(lines)
+    (l, idx) = iterate(lines)
     while l != ""
-        (idx, r) = split(l, ':')
-        idx = parse(Int, idx)
-        if r[2] == '"'
-            rules[idx] = r[3]
+        (key, rule) = split(l, ": ")
+        key = parse(Int, key)
+        if rule[1] == '"'
+            rules[key] = rule[2]
         else
-            outer::Vector{Vector{Int}} = []
-            inner::Vector{Int} = []
-            r = split(r)
-            for i in eachindex(r)
-                v = tryparse(Int, r[i])
-                if v !== nothing
-                    push!(inner, v)
-                else
-                    push!(outer, inner)
-                    inner = []
+            r = []
+            sequences = if occursin(" | ", rule) split(rule, " | ") else [rule] end
+            for seq in sequences
+                if isa(seq, Char)
+                    val = parse(Int, seq)
+                elseif occursin(' ', seq) 
+                    val = parse.(Int, split(seq))
+                else 
+                    val = parse.(Int, seq)
                 end
+                push!(r, val)
             end
-            push!(outer, inner)
-            rules[idx] = outer
+            rules[key] = r            
         end
-        (l, line_idx) = iterate(lines, line_idx)
+        (l, idx) = iterate(lines, idx)
     end
-    (rules = rules, messages = lines[line_idx:end])
+    (rules = rules, strings = lines[idx:end])
 end
 
-function and(s, r, rules, idx)
-    match = true
-    inner_idx = idx
-    for rule in r
-        (match, inner_idx) = check_rule(s, rules[rule], rules, inner_idx)
-        if !match
-            return (match, idx)
+@resumable function and(rules, seq, str)
+    if isempty(seq)
+        @yield str
+    else
+        (key, seq) = Iterators.peel(seq)
+        for str in rule(rules, key, str)
+            for val in and(rules, seq, str)
+                @yield val
+            end
         end
     end
-    (match, inner_idx)
 end
 
-function or(s, r, rules, idx)
-    match = false
-    inner_idx = idx
-    for rule in r
-        (match, inner_idx) = check_rule(s, rule, rules, inner_idx)
-        if match
-            return (match, inner_idx)
+@resumable function or(rules, alt, str)
+    for seq in alt
+        for val in and(rules, seq, str)
+            @yield val
         end
     end
-    (match, idx)
 end
 
-function check_rule(s, r, rules, idx)
-    if isa(r, Char)
-        if s[idx] == r
-            (true, idx + 1)
-        else
-            (false, idx)
+@resumable function rule(rules, key, str)
+    if isa(rules[key], Vector)
+        for val in or(rules, rules[key], str)
+            @yield val
         end
     else
-        if isa(r[1], Vector)
-            (match, idx) = or(s, r, rules, idx)
-        elseif isa(r[1], Int)
-            (match, idx) = and(s, r, rules, idx)
+        if str != "" && str[1] == rules[key]
+            if isa(str, Char)
+                @yield ""
+            else
+                @yield str[2:end]
+            end
         end
     end
 end
+            
 
-function count_valid(t)
-    count = 0
-    match = false
-    for m in t.messages
-        (match, acc) = check_rule(m, t.rules[0], t.rules, 1)
-        if match && acc - 1 == length(m)
-            count += 1 
-        end
-    end
-    count
+function is_valid(rules, str::String)
+    any(m == "" for m=rule(rules, 0, str))
 end
 
+function count_valid(rules, strings)
+    sum([is_valid(rules, str) for str=strings])
+end
 
 function main1(path)
     t = read_input(path)
-    count_valid(t)
+    count_valid(t.rules, t.strings)
 end
 
 function main2(path)
     t = read_input(path)
     t.rules[8] = [[42], [42, 8]]
-    t.rules[11] = [[42, 32], [42, 11, 31]]
-    count_valid(t)
+    t.rules[11] = [[42, 31], [42, 11, 31]]
+    count_valid(t.rules, t.strings)
 end
 
-# main1("day19/input_sample.txt")
-# main1("day19/input.txt")
-main2("day19/input.txt")
+main1("day19/input_sample.txt")
+@btime main1("day19/input.txt")
+main2("day19/input_sample2.txt")
+@btime main2("day19/input.txt")
