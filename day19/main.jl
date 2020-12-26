@@ -1,4 +1,3 @@
-using Underscores
 using BenchmarkTools
 using ResumableFunctions
 
@@ -60,22 +59,18 @@ end
         end
     else
         if str != "" && str[1] == rules[key]
-            if isa(str, Char)
-                @yield ""
-            else
-                @yield str[2:end]
-            end
+            @yield str[2:end]
         end
     end
 end
             
 
-function is_valid(rules, str::String)
+function is_valid(rules, str)
     any(m == "" for m=rule(rules, 0, str))
 end
 
 function count_valid(rules, strings)
-    sum([is_valid(rules, str) for str=strings])
+    sum(is_valid(rules, str) for str=strings)
 end
 
 function main1(path)
