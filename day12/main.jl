@@ -11,6 +11,13 @@ const action_to_int = Dict(
     'F' => 7,
 )
 
+const directions = [
+    (-1, 0), 
+    (0, 1), 
+    (1, 0), 
+    (0, -1),
+]
+
 const sin = Dict(
     90 => 1,
     180 => 0,
@@ -28,13 +35,14 @@ function read_input(path::String)
     @_ map((action_to_int[_[1]], parse(Int, _[2:end])), readlines(path))
 end
 
-function forward(val::Int, rot_id::Int, pos::Tuple{Int,Int}, directions::Array{Tuple{Int,Int},1})::Tuple{Int,Int}
+function forward(val::Int, rot_id::Int, pos::Tuple{Int,Int})::Tuple{Int,Int}
     pos = pos .+ (directions[rot_id] .* val)
 end
 
-function forward(bp::Tuple{Int,Int}, wp::Tuple{Int,Int}, val)::Tuple{Int,Int}
+function forward(val::Int, bp::Tuple{Int,Int}, wp::Tuple{Int,Int})::Tuple{Int,Int}
     bp = bp .+ (wp .* val)
 end
+
 
 function rotate(val::Int, rot_id::Int, d::Int)::Int
     rot_val = mod(div(val, 90), 4)
@@ -54,18 +62,17 @@ end
 
 function main1(path::String="day12/input.txt")
     actions = read_input(path)
-    directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     facing::Int = 2
     pos = (0, 0)
     for a in actions
         if 1 <= a[1] <= 4
-            pos = forward(a[2], a[1], pos, directions)
+            pos = forward(a[2], a[1], pos)
         elseif a[1] == 5
             facing = rotate(a[2], facing, -1)
         elseif a[1] == 6
             facing = rotate(a[2], facing, 1)
         elseif a[1] == 7
-            pos = forward(a[2], facing, pos, directions)
+            pos = forward(a[2], facing, pos)
         end
     end
     # display(pos)
@@ -74,18 +81,17 @@ end
 
 function main2(path::String="day12/input.txt")
     actions = read_input(path)
-    directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     bp = (0, 0)
     wp = (-1, 10)
     for a in actions
         if 1 <= a[1] <= 4
-            wp = forward(a[2], a[1], wp, directions)
+            wp = forward(a[2], a[1], wp)
         elseif a[1] == 5
             wp = rotate(wp, a[2], -1)
         elseif a[1] == 6
             wp = rotate(wp, a[2], 1)
         elseif a[1] == 7
-            bp = forward(bp, wp, a[2])
+            bp = forward(a[2], bp, wp)
         end
     end
     # display(bp)

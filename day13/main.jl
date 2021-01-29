@@ -5,7 +5,7 @@ function read_input(path)
     lines = readlines(path)
     target = parse(Int, lines[1])
     schedule = @_ lines[2] |> split(__, ',') |> map(tryparse(Int, _), __)
-    return (target=target, schedule=schedule)
+    return (target = target, schedule = schedule)
 end
 
 function chineseremainder(n, a)
@@ -18,8 +18,8 @@ function chineseremainder(n, a)
     ...
     x ≡ aₖ (mod nₖ)
     """
-    Π = prod(n)
-    mod(sum(aᵢ * invmod(Π ÷ nᵢ, nᵢ) * (Π ÷ nᵢ) for (nᵢ, aᵢ) in zip(n, a)), Π)
+    ∏ = prod(n)
+    mod(sum(aᵢ * invmod(∏ ÷ nᵢ, nᵢ) * (∏ ÷ nᵢ) for (nᵢ, aᵢ) in zip(n, a)), ∏)
 end
 
 function main1(path)
@@ -33,7 +33,7 @@ end
 
 function main2(path)
     d = read_input(path)
-    a = [-i+1 for (i, a)=enumerate(d.schedule) if !isnothing(a)]
+    a = [-i + 1 for (i, a) = enumerate(d.schedule) if !isnothing(a)]
     n = @_ filter(!isnothing(_), d.schedule)
     t = chineseremainder(n, a)
 end
