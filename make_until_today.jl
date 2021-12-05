@@ -1,6 +1,6 @@
 using Dates
 
-cookie_token="***REMOVED***"
+cookie_token="foobar"
 
 function make_day(day::Int64)
     day_dir = mkpath(joinpath(pwd(), "day$day"))
